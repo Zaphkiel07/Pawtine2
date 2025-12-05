@@ -1,0 +1,53 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Lavender-themed color palette for Pawtine */
+    /* Light, airy background colors */
+    --background: 250 100% 98%; /* #F7F7FB - soft white with lavender tint */
+    --foreground: 0 0% 18%; /* #2E2E2E - deep neutral gray for text */
+
+    --muted: 250 50% 95%; /* #EDEDF9 - light lavender gray */
+    --muted-foreground: 0 0% 18% / 0.6; /* rgba(46, 46, 46, 0.6) */
+    --muted-foreground-light: 0 0% 18% / 0.4; /* rgba(46, 46, 46, 0.4) */
+    --muted-foreground-dark: 0 0% 18% / 0.7; /* rgba(46, 46, 46, 0.7) */
+
+    --card: 0 0% 100%; /* Pure white for cards */
+    --card-foreground: 0 0% 18%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 18%;
+
+    /* Primary Lavender Colors */
+    --primary: 255 64% 66%; /* #7B5BF2 - main lavender */
+    --primary-foreground: 0 0% 100%; /* white text on lavender */
+    --primary-dark: 255 64% 58%; /* #6A4BE0 - darker lavender for hover */
+    --primary-light: 250 80% 90%; /* #D9D6F7 - light lavender accent */
+
+    /* Secondary Colors */
+    --secondary: 250 50% 95%; /* #EDEDF9 - light lavender */
+    --secondary-foreground: 0 0% 18%;
+
+    --accent: 250 50% 95%;
+    --accent-foreground: 0 0% 18%;
+
+    --border: 250 30% 90%; /* #E5E3F0 - subtle lavender border */
+    --border-light: 250 30% 95%;
+    --border-dark: 250 30% 85%;
+
+    --ring: 255 64% 66%; /* lavender ring for focus states */
+
+    --radius: 0.625rem; /* 10px for smooth, rounded corners */
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}

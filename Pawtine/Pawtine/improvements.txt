@@ -1,0 +1,24 @@
+Product & UX
+- Tighten PRD ↔ implementation alignment: the spec calls out mobile-first (Flutter/React Native) but the MVP is web-only Next.js; decide whether to reframe the PRD as web/PWA or spin up a parallel React Native shell so the narrative and delivery match.
+- Expand onboarding signal: add progress indicators, context on default routines, and inline validation (e.g., prevent blank timezone/dog age) to reduce user drop-off during first run.
+- Close the notifications gap: ship real push/local notifications (Supabase Edge Functions + Expo/FCM) so the “automated reminders” promise is fulfilled rather than only described in the PRD.
+- Improve accessibility & responsiveness: audit focus states, color contrast, semantic headings, and small-screen layouts; the dashboard cards currently stack but charts become cramped on sub-360px widths.
+- Add empty/error states across pages (dashboard, settings) so demo vs. live Supabase mode gives clear feedback when fetching routines fails or returns empty.
+
+Technical & Architecture
+- Harden server actions with validation/error handling (e.g., zod schema for FormData) before calling Supabase to avoid inserting invalid timestamps or empty labels.
+- Patch demo data bugs: `demoRunOnboarding` returns `store.userId` (undefined) -> propagate the actual `store.user.id`; also consider seeding history so dashboard charts preview meaningful data.
+- Persist demo store per session: the current global singleton can leak across users in a long-lived server process; scope it via cookies/session storage to avoid cross-user data bleed when deployed.
+- Add optimistic UI or revalidation batching to cut down on multiple `revalidatePath` calls per action (combine home/dashboard refresh or use `router.refresh()` client-side where appropriate).
+- Introduce domain services/hooks to encapsulate routine calculations (progress, streaks) for reuse and unit testing instead of doing it inline in server components.
+
+Data & Security
+- Enable RLS + policies for `routines` and `history`; right now only `users` and `dogs` are protected, leaving the most sensitive tables exposed in multi-tenant Supabase.
+- Backfill Supabase seeds with realistic history rows, timezone-varied schedules, and multiple dogs to stress-test queries and UI grouping logic.
+- Add background job/Edge Function to mark missed routines at end-of-day so streak logic reflects reality when a user forgets to press “Done.”
+
+Quality & Tooling
+- Add automated tests: component smoke tests (React Testing Library), Supabase action integration tests via Vitest, and e2e flows via Playwright covering onboarding → daily tracker.
+- Wire lint/test/build into CI (GitHub Actions) and add preview deployments (Vercel) for rapid UX QA on feature branches.
+- Capture analytics/observability: basic event tracking (PostHog/Segment) plus server logging of Supabase errors to surface silent failures currently swallowed by server actions.
+- Document environment setup for Supabase CLI (anon/service keys, Edge fns) and include `.env.example` entries for all flags referenced in code (`NEXT_PUBLIC_DEMO_USER_ID`, `OPENAI_API_KEY`) to cut onboarding friction for new contributors.
