@@ -3,9 +3,10 @@
 import { motion, HTMLMotionProps } from "framer-motion"
 import type { ReactNode } from "react"
 
-interface AnimatedSectionProps extends HTMLMotionProps<"div"> {
+interface AnimatedSectionProps extends Omit<HTMLMotionProps<"div">, "ref"> {
   children: ReactNode
   delay?: number
+  ref?: React.Ref<HTMLDivElement>
 }
 
 export function AnimatedSection({ children, className, delay = 0, ...props }: AnimatedSectionProps) {
@@ -16,7 +17,7 @@ export function AnimatedSection({ children, className, delay = 0, ...props }: An
       viewport={{ once: true }}
       transition={{ duration: 0.8, ease: [0.33, 1, 0.68, 1], delay }}
       className={className}
-      {...(props as any)}
+      {...props}
     >
       {children}
     </motion.div>
