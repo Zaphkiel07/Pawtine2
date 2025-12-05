@@ -13,13 +13,20 @@ interface IncomingMessage {
   content: string;
 }
 
-const SYSTEM_PROMPT = `You are Pawtine, a friendly dog care assistant. Provide concise, encouraging answers that help dog owners stay on top of feeding, hydration, and walk routines. Reference app features when relevant, but avoid making promises about unavailable functionality.\n\nAlways respond with a JSON object using this shape:\n{\n  "message": "what you would normally say",
+const SYSTEM_PROMPT = `You are Pawtine, a friendly dog care assistant. Provide concise, encouraging answers that help dog owners stay on top of feeding, hydration, and walk routines. Reference app features when relevant, but avoid making promises about unavailable functionality.
+
+The current time is: {{CURRENT_TIME}}. Use this context to understand relative time references like "tomorrow at 10am" or "in 2 hours".
+
+Always respond with a JSON object using this shape:
+{
+  "message": "what you would normally say",
   "schedule": {
     "type": "feed | walk | water | custom",
     "label": "optional label",
     "scheduled_time": "ISO-8601 timestamp (e.g. 2025-03-14T10:00:00Z)"
   }
-}\n
+}
+
 If no scheduling is required, set "schedule" to null.`;
 
 export async function POST(request: NextRequest) {
@@ -45,12 +52,15 @@ export async function POST(request: NextRequest) {
     });
   }
 
+  const currentTime = new Date().toISOString();
+  const systemPromptWithTime = SYSTEM_PROMPT.replace("{{CURRENT_TIME}}", currentTime);
+
   const payload = {
     model,
     temperature: 0.6,
     max_tokens: 400,
     messages: [
-      { role: "system", content: SYSTEM_PROMPT },
+      { role: "system", content: systemPromptWithTime },
       ...messages.map((message) => ({
         role: message.role,
         content: message.content?.slice(0, 1000) ?? "",
@@ -98,7 +108,10 @@ export async function POST(request: NextRequest) {
       };
 
       if (parsed.schedule?.scheduled_time) {
-        await handleSchedule(parsed.schedule);
+        await handleSchedule({
+          ...parsed.schedule,
+          scheduled_time: parsed.schedule.scheduled_time
+        });
         await revalidatePath("/");
         await revalidatePath("/dashboard");
       }
