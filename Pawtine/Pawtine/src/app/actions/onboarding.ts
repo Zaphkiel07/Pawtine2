@@ -27,7 +27,11 @@ export async function submitOnboarding(formData: FormData) {
     return formatISO(scheduled);
   };
 
-  const routines = [
+  const routines: Array<{
+    type: "feed" | "walk" | "water" | "custom";
+    label: string;
+    scheduled_time: string;
+  }> = [
     {
       type: "feed" as const,
       label: `${dogName} breakfast`,
