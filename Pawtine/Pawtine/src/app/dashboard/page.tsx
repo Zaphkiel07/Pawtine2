@@ -33,8 +33,8 @@ export default async function DashboardPage() {
 
   const summaryByDay = weekDates.map((date) => {
     const prefix = formatISO(date, { representation: "date" });
-    const dayRows = weekly.filter((row) => row.day?.startsWith(prefix));
-    const completed = dayRows.filter((row) => row.status === "done").length;
+    const dayRows = weekly.filter((row: WeeklyRow) => row.day?.startsWith(prefix));
+    const completed = dayRows.filter((row: WeeklyRow) => row.status === "done").length;
     const total = dayRows.length;
 
     return {
